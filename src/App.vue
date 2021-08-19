@@ -138,11 +138,8 @@ export default {
 		const fileQuality = ref( 80 )
 		const captureDelay = ref( 0 )
 
-		const serverUrl = process.env.VUE_APP_SERVER_URL
-		const serverPort = process.env.VUE_APP_SERVER_PORT
-
 		const fileName = ref( '' )
-		const fileUrl = computed( () => `${ serverUrl }:${ serverPort }/static/screenshots/${ fileName.value }` )
+		const fileUrl = computed( () => `/screenshots/${ fileName.value }` )
 
 		const fetchNotification = ref( false )
 		const successNotification = ref( false )
@@ -166,7 +163,7 @@ export default {
 
 			localStorage.setItem( 'webshotSettings', settings )
 
-			const response = await fetch( `${ serverUrl }:${ serverPort }/screenshot`, {
+			const response = await fetch( '/screenshot', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
