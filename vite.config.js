@@ -5,4 +5,7 @@ import vue from '@vitejs/plugin-vue'
 export default defineConfig({
   resolve: { alias: { '@': '/src' } },
   plugins: [ vue() ],
+  build: {
+    outDir: '../fleximple-webshot-server/public',
+  },
 })
