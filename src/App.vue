@@ -134,108 +134,82 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { ref, computed, onMounted } from 'vue'
 
-export default {
-  name: 'App',
-  setup() {
-    const targetProtocol = ref( 'http' )
-    const targetUrl = ref( '' )
-    const fileWidth = ref( 1200 )
-    const fileHeight = ref( 1600 )
-    const fullPage = ref( false )
-    const fileType = ref( 'jpeg' )
-    const fileQuality = ref( 80 )
-    const captureDelay = ref( 0 )
+const targetProtocol = ref( 'http' )
+const targetUrl = ref( '' )
+const fileWidth = ref( 1200 )
+const fileHeight = ref( 1600 )
+const fullPage = ref( false )
+const fileType = ref( 'jpeg' )
+const fileQuality = ref( 80 )
+const captureDelay = ref( 0 )
 
-    const fileName = ref( '' )
-    const fileUrl = computed( () => `/screenshots/${ fileName.value }` )
+const fileName = ref( '' )
+const fileUrl = computed( () => `/screenshots/${ fileName.value }` )
 
-    const fetchNotification = ref( false )
-    const successNotification = ref( false )
-    const errorNotification = ref( false )
-    const isFetching = ref( false )
+const fetchNotification = ref( false )
+const successNotification = ref( false )
+const errorNotification = ref( false )
+const isFetching = ref( false )
 
-    const requestScreenshot = async () => {
-      isFetching.value = true
-      fetchNotification.value = true
+const requestScreenshot = async () => {
+  isFetching.value = true
+  fetchNotification.value = true
 
-      const settings = JSON.stringify({
-        targetProtocol: targetProtocol.value,
-        targetUrl: targetUrl.value,
-        fileWidth: fileWidth.value,
-        fileHeight: fileHeight.value,
-        fullPage: fullPage.value,
-        fileType: fileType.value,
-        fileQuality: fileQuality.value,
-        captureDelay: captureDelay.value,
-      })
+  const settings = JSON.stringify({
+    targetProtocol: targetProtocol.value,
+    targetUrl: targetUrl.value,
+    fileWidth: fileWidth.value,
+    fileHeight: fileHeight.value,
+    fullPage: fullPage.value,
+    fileType: fileType.value,
+    fileQuality: fileQuality.value,
+    captureDelay: captureDelay.value,
+  })
 
-      localStorage.setItem( 'webshotSettings', settings )
+  localStorage.setItem( 'webshotSettings', settings )
 
-      const response = await fetch( '/screenshot', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: settings,
-      })
-        .then( data => {
-          isFetching.value = false
-          fetchNotification.value = false
-          successNotification.value = true
-          return data.json()
-        })
-        .catch( error => {
-          isFetching.value = false
-          fetchNotification.value = false
-          errorNotification.value = true
-          console.error( 'Error:', error )
-        })
-
-      if ( response ) {
-        fileName.value = response.fileName
-      }
-    }
-
-    onMounted( () => {
-      const settings = JSON.parse( localStorage.getItem( 'webshotSettings' ) )
-
-      if ( settings ) {
-        targetProtocol.value = settings.targetProtocol
-        targetUrl.value = settings.targetUrl
-        fileWidth.value = settings.fileWidth
-        fileHeight.value = settings.fileHeight
-        fullPage.value = settings.fullPage
-        fileType.value = settings.fileType
-        fileQuality.value = settings.fileQuality
-        captureDelay.value = settings.captureDelay
-      }
+  const response = await fetch( '/screenshot', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: settings,
+  })
+    .then( data => {
+      isFetching.value = false
+      fetchNotification.value = false
+      successNotification.value = true
+      return data.json()
+    })
+    .catch( error => {
+      isFetching.value = false
+      fetchNotification.value = false
+      errorNotification.value = true
+      console.error( 'Error:', error )
     })
 
-    return {
-      targetProtocol,
-      targetUrl,
-      fileWidth,
-      fileHeight,
-      fullPage,
-      fileType,
-      fileQuality,
-      captureDelay,
-
-      fileName,
-      fileUrl,
-
-      fetchNotification,
-      successNotification,
-      errorNotification,
-      isFetching,
-
-      requestScreenshot,
-    }
-  },
+  if ( response ) {
+    fileName.value = response.fileName
+  }
 }
+
+onMounted( () => {
+  const settings = JSON.parse( localStorage.getItem( 'webshotSettings' ) )
+
+  if ( settings ) {
+    targetProtocol.value = settings.targetProtocol
+    targetUrl.value = settings.targetUrl
+    fileWidth.value = settings.fileWidth
+    fileHeight.value = settings.fileHeight
+    fullPage.value = settings.fullPage
+    fileType.value = settings.fileType
+    fileQuality.value = settings.fileQuality
+    captureDelay.value = settings.captureDelay
+  }
+})
 </script>
 
 <style lang="scss">
@@ -470,7 +444,9 @@ h6 {
     height: 2.25rem;
     padding: 0.25rem 0.5rem;
     outline: none;
-    transition: color 0.24s ease, background-color 0.24s ease, border 0.24s ease;
+    transition: color 0.24s ease,
+      background-color 0.24s ease,
+      border 0.24s ease;
 
     &::placeholder {
       color: var(--grey-400);
