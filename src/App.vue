@@ -147,7 +147,7 @@ const fileQuality = ref( 80 )
 const captureDelay = ref( 0 )
 
 const fileName = ref( '' )
-const fileUrl = computed( () => `/screenshots/${ fileName.value }` )
+const fileUrl = computed( () => `../public/screenshots/${ fileName.value }` )
 
 const fetchNotification = ref( false )
 const successNotification = ref( false )

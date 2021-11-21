@@ -6,6 +6,6 @@ export default defineConfig({
   resolve: { alias: { '@': '/src' } },
   plugins: [ vue() ],
   build: {
-    outDir: '../fleximple-webshot-server/public',
+    outDir: '../public',
   },
 })
