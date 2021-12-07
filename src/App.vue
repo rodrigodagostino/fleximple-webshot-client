@@ -494,7 +494,6 @@ h6 {
 
       &:last-child {
         flex: 1;
-        width: auto;
         border-radius: 0 0.25rem 0.25rem 0;
       }
     }
