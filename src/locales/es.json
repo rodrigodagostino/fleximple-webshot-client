@@ -1,0 +1,20 @@
+{
+  "label": {
+    "siteUrl": "URL del sitio",
+    "fileWidth": "Ancho (en píxeles)",
+    "fileHeight": "Alto (en píxeles)",
+    "fullPage": "Página completa",
+    "fileFormat": "Formato",
+    "fileQuality": "Calidad",
+    "captureDelay": "Demora antes de la captura (en segundos)",
+    "submit": "Capturar"
+  },
+  "notification": {
+    "generating": "Generando captura…",
+    "success": "Captura generada exitosamente.",
+    "error": "Ocurrió un error mientras se generaba la captura."
+  },
+  "screenshot": {
+    "alt": "Captura tomada de"
+  }
+}

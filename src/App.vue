@@ -6,7 +6,9 @@
     <main class="site-main">
       <form @submit.prevent="requestScreenshot" class="form card">
         <div class="form-control">
-          <label for="target-url" class="form-label">Site URL</label>
+          <label for="target-url" class="form-label">
+            {{ t('label.siteUrl') }}
+          </label>
           <div class="form-field-group">
             <select
               name="target-protocol"
@@ -29,7 +31,9 @@
           </div>
         </div>
         <div class="form-control">
-          <label for="file-width" class="form-label">File width</label>
+          <label for="file-width" class="form-label">
+            {{ t('label.fileWidth') }}
+          </label>
           <input
             type="number"
             name="file-width"
@@ -39,7 +43,9 @@
           />
         </div>
         <div class="form-control">
-          <label for="file-height" class="form-label">File height</label>
+          <label for="file-height" class="form-label">
+            {{ t('label.fileHeight') }}
+          </label>
           <input
             type="number"
             name="file-height"
@@ -58,11 +64,13 @@
               class="form-field"
               v-model="fullPage"
             />
-            Full page
+            {{ t('label.fullPage') }}
           </label>
         </div>
         <div class="form-control">
-          <label for="file-type" class="form-label">File format</label>
+          <label for="file-type" class="form-label">
+            {{ t('label.fileFormat') }}
+          </label>
           <select
             name="file-type"
             id="file-type"
@@ -75,7 +83,9 @@
           </select>
         </div>
         <div class="form-control">
-          <label for="file-quality" class="form-label">File quality</label>
+          <label for="file-quality" class="form-label">
+            {{ t('label.fileQuality') }}
+          </label>
           <input
             type="number"
             name="file-quality"
@@ -86,7 +96,7 @@
         </div>
         <div class="form-control">
           <label for="capture-delay" class="form-label">
-            Delay before capturing (seconds)
+            {{ t('label.captureDelay') }}
           </label>
           <input
             type="number"
@@ -97,7 +107,9 @@
           />
         </div>
         <div class="form-control">
-          <button type="submit" class="form-button">Capture</button>
+          <button type="submit" class="form-button">
+            {{ t('label.submit') }}
+          </button>
         </div>
       </form>
 
@@ -107,26 +119,29 @@
         mode="out-in"
       >
         <p v-if="fetchNotification" class="notification notification--fetching">
-          Generating screenshot…
+          {{ t('notification.generating') }}
         </p>
         <p
           v-else-if="successNotification"
           class="notification notification--success"
         >
-          Screenshot generated successfully!
+          {{ t('notification.success') }}
         </p>
         <p
           v-else-if="errorNotification"
           class="notification notification--error"
         >
-          An error ocurred while generating the screenshot.
+          {{ t('notification.error') }}
         </p>
       </transition>
 
       <transition name="fade-slide-up">
         <div v-if="!isFetching && fileName" class="card">
           <a :href="fileUrl" target="_blank" :download="fileName">
-            <img :src="fileUrl" :alt="`Screenshot taken for ${targetUrl}`" />
+            <img
+              :src="fileUrl"
+              :alt="`${t('screenshot.alt')} ${targetUrl}`"
+            />
           </a>
         </div>
       </transition>
@@ -136,6 +151,11 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { locale, t } = useI18n({ useScope: 'global' })
+
+locale.value = navigator.language
 
 const targetProtocol = ref( 'http' )
 const targetUrl = ref( '' )
@@ -444,9 +464,7 @@ h6 {
     height: 2.25rem;
     padding: 0.25rem 0.5rem;
     outline: none;
-    transition: color 0.24s ease,
-      background-color 0.24s ease,
-      border 0.24s ease;
+    transition: color 0.24s ease, background-color 0.24s ease, border 0.24s ease;
 
     &::placeholder {
       color: var(--grey-400);

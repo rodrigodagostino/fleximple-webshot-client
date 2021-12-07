@@ -1,0 +1,20 @@
+{
+  "label": {
+    "siteUrl": "Site URL",
+    "fileWidth": "Width (in pixels)",
+    "fileHeight": "Height (in pixels)",
+    "fullPage": "Full page",
+    "fileFormat": "Format",
+    "fileQuality": "Quality",
+    "captureDelay": "Delay before capture (in seconds)",
+    "submit": "Capture"
+  },
+  "notification": {
+    "generating": "Generating screenshot…",
+    "success": "Screenshot generated successfully.",
+    "error": "An error ocurred while generating the screenshot."
+  },
+  "screenshot": {
+    "alt": "Screenshot taken from"
+  }
+}
