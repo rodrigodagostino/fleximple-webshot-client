@@ -140,6 +140,8 @@
           <a :href="fileUrl" target="_blank" :download="fileName">
             <img
               :src="fileUrl"
+              :width="fileWidth"
+              :height="fileHeight"
               :alt="`${t('screenshot.alt')} ${targetUrl}`"
             />
           </a>
@@ -290,7 +292,8 @@ html {
 *,
 *::before,
 *::after {
-  /* Inherit box-sizing to make it easier to change the property for components that leverage other behavior; see http://css-tricks.com/inheriting-box-sizing-probably-slightly-better-best-practice/ */
+  /* Inherit box-sizing to make it easier to change the property for components that leverage other behavior;
+  see http://css-tricks.com/inheriting-box-sizing-probably-slightly-better-best-practice/ */
   box-sizing: inherit;
 }
 
@@ -359,6 +362,7 @@ object,
 video {
   display: block;
   max-width: 100%;
+  height: auto;
 }
 
 /* Useful table styles */
