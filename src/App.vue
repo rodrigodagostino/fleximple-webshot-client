@@ -92,6 +92,7 @@
             id="file-quality"
             class="form-field"
             v-model="fileQuality"
+            :disabled="fileType === 'png'"
           />
         </div>
         <div class="form-control">
