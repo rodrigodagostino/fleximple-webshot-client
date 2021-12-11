@@ -78,8 +78,8 @@
             v-model="fileType"
           >
             <option value="jpeg">JPG</option>
-            <option value="pdf">PDF</option>
             <option value="png">PNG</option>
+            <option value="webp">WEBP</option>
           </select>
         </div>
         <div class="form-control">
