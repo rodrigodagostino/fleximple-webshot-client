@@ -119,19 +119,23 @@
         leave-active-class="fade-leave-active"
         mode="out-in"
       >
-        <p v-if="fetchNotification" class="notification notification--fetching">
+        <p
+          v-if="fetchNotification" class="notification notification--fetching">
+          <SpinnerIcon />
           {{ t('notification.generating') }}
         </p>
         <p
           v-else-if="successNotification"
           class="notification notification--success"
         >
+          <CheckIcon />
           {{ t('notification.success') }}
         </p>
         <p
           v-else-if="errorNotification"
           class="notification notification--error"
         >
+          <TimesIcon />
           {{ t('notification.error') }}
         </p>
       </transition>
@@ -155,6 +159,9 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import CheckIcon from '@/assets/icons/check.svg?component'
+import SpinnerIcon from '@/assets/icons/spinner.svg?component'
+import TimesIcon from '@/assets/icons/times.svg?component'
 
 const { locale, t } = useI18n({ useScope: 'global' })
 
@@ -536,13 +543,19 @@ h6 {
 }
 
 .notification {
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border-radius: 0.25rem;
   padding: 1rem;
   box-shadow: var(--box-shadow-2);
 
   &--fetching {
     background-color: var(--sky-100);
+
+    .icon {
+      animation: rotate 1.2s linear infinite;
+    }
   }
 
   &--success {
@@ -551,6 +564,21 @@ h6 {
 
   &--error {
     background-color: var(--red-100);
+  }
+
+  .icon {
+    width: auto;
+    height: 1rem;
+    margin-right: 0.75rem;
+  }
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }
 
