@@ -156,7 +156,7 @@ const fileType = ref( 'jpeg' )
 const fileQuality = ref( 80 )
 const captureDelay = ref( 0 )
 
-const fileName = ref( '' )
+const fileName = ref( null )
 const fileUrl = computed( () => `/screenshots/${ fileName.value }` )
 
 const mainState = ref( 'idle' )
