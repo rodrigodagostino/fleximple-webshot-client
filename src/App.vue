@@ -1,3 +1,79 @@
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
+import BaseNotification from './components/BaseNotification.vue'
+
+const { locale, t } = useI18n({ useScope: 'global' })
+
+locale.value = navigator.language
+
+const targetProtocol = ref( 'http' )
+const targetUrl = ref( '' )
+const fileWidth = ref( 1200 )
+const fileHeight = ref( 1600 )
+const fullPage = ref( false )
+const fileType = ref( 'jpeg' )
+const fileQuality = ref( 80 )
+const captureDelay = ref( 0 )
+
+const fileName = ref( null )
+const fileUrl = computed( () => `/screenshots/${ fileName.value }` )
+
+const mainState = ref( 'idle' )
+
+const requestScreenshot = async () => {
+  mainState.value = 'generating'
+
+  const settings = JSON.stringify({
+    targetProtocol: targetProtocol.value,
+    targetUrl: targetUrl.value,
+    fileWidth: fileWidth.value,
+    fileHeight: fileHeight.value,
+    fullPage: fullPage.value,
+    fileType: fileType.value,
+    fileQuality: fileQuality.value,
+    captureDelay: captureDelay.value,
+  })
+
+  localStorage.setItem( 'webshotSettings', settings )
+
+  const response = await fetch( '/screenshot', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: settings,
+  })
+    .then( data => {
+      mainState.value = 'success'
+      return data.json()
+    })
+    .catch( error => {
+      mainState.value = 'error'
+      console.error( 'Error:', error )
+    })
+
+  if ( response ) {
+    fileName.value = response.fileName
+  }
+}
+
+onMounted( () => {
+  const settings = JSON.parse( localStorage.getItem( 'webshotSettings' ) )
+
+  if ( settings ) {
+    targetProtocol.value = settings.targetProtocol
+    targetUrl.value = settings.targetUrl
+    fileWidth.value = settings.fileWidth
+    fileHeight.value = settings.fileHeight
+    fullPage.value = settings.fullPage
+    fileType.value = settings.fileType
+    fileQuality.value = settings.fileQuality
+    captureDelay.value = settings.captureDelay
+  }
+})
+</script>
+
 <template>
   <div class="container">
     <header class="site-header">
@@ -137,82 +213,6 @@
     </main>
   </div>
 </template>
-
-<script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useI18n } from 'vue-i18n'
-import BaseNotification from './components/BaseNotification.vue'
-
-const { locale, t } = useI18n({ useScope: 'global' })
-
-locale.value = navigator.language
-
-const targetProtocol = ref( 'http' )
-const targetUrl = ref( '' )
-const fileWidth = ref( 1200 )
-const fileHeight = ref( 1600 )
-const fullPage = ref( false )
-const fileType = ref( 'jpeg' )
-const fileQuality = ref( 80 )
-const captureDelay = ref( 0 )
-
-const fileName = ref( null )
-const fileUrl = computed( () => `/screenshots/${ fileName.value }` )
-
-const mainState = ref( 'idle' )
-
-const requestScreenshot = async () => {
-  mainState.value = 'generating'
-
-  const settings = JSON.stringify({
-    targetProtocol: targetProtocol.value,
-    targetUrl: targetUrl.value,
-    fileWidth: fileWidth.value,
-    fileHeight: fileHeight.value,
-    fullPage: fullPage.value,
-    fileType: fileType.value,
-    fileQuality: fileQuality.value,
-    captureDelay: captureDelay.value,
-  })
-
-  localStorage.setItem( 'webshotSettings', settings )
-
-  const response = await fetch( '/screenshot', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: settings,
-  })
-    .then( data => {
-      mainState.value = 'success'
-      return data.json()
-    })
-    .catch( error => {
-      mainState.value = 'error'
-      console.error( 'Error:', error )
-    })
-
-  if ( response ) {
-    fileName.value = response.fileName
-  }
-}
-
-onMounted( () => {
-  const settings = JSON.parse( localStorage.getItem( 'webshotSettings' ) )
-
-  if ( settings ) {
-    targetProtocol.value = settings.targetProtocol
-    targetUrl.value = settings.targetUrl
-    fileWidth.value = settings.fileWidth
-    fileHeight.value = settings.fileHeight
-    fullPage.value = settings.fullPage
-    fileType.value = settings.fileType
-    fileQuality.value = settings.fileQuality
-    captureDelay.value = settings.captureDelay
-  }
-})
-</script>
 
 <style lang="scss">
 /**

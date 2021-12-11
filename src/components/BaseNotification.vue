@@ -1,3 +1,19 @@
+<script setup>
+import { useI18n } from 'vue-i18n'
+import CheckIcon from '@/assets/icons/check.svg?component'
+import SpinnerIcon from '@/assets/icons/spinner.svg?component'
+import TimesIcon from '@/assets/icons/times.svg?component'
+
+defineProps({
+  mainState: {
+    type: String,
+    default: 'idle',
+  },
+})
+
+const { t } = useI18n({ useScope: 'global' })
+</script>
+
 <template>
   <div
     v-if="mainState === 'generating'"
@@ -21,22 +37,6 @@
     <span>{{ t('notification.error') }}</span>
   </div>
 </template>
-
-<script setup>
-import { useI18n } from 'vue-i18n'
-import CheckIcon from '@/assets/icons/check.svg?component'
-import SpinnerIcon from '@/assets/icons/spinner.svg?component'
-import TimesIcon from '@/assets/icons/times.svg?component'
-
-defineProps({
-  mainState: {
-    type: String,
-    default: 'idle',
-  },
-})
-
-const { t } = useI18n({ useScope: 'global' })
-</script>
 
 <style lang="scss">
 .notification {
