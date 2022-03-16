@@ -1,11 +1,14 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import VueHcaptcha from '@hcaptcha/vue3-hcaptcha'
 import BaseNotification from './components/BaseNotification.vue'
 
 const { locale, t } = useI18n({ useScope: 'global' })
 
 locale.value = navigator.language
+
+const hcaptchaSiteKey = import.meta.env.VITE_HCAPTCHA_SITE_KEY
 
 const targetProtocol = ref( 'http' )
 const targetUrl = ref( '' )
@@ -21,7 +24,34 @@ const fileUrl = computed( () => `/screenshots/${ fileName.value }` )
 
 const mainState = ref( 'idle' )
 
+const isVerified = ref( false )
+const hasExpired = ref( false )
+const token = ref( '' )
+const eKey = ref( '' )
+const error = ref( '' )
+
+const onVerify = ( tokenStr, ekey ) => {
+  isVerified.value = true
+  token.value = tokenStr
+  eKey.value = ekey
+}
+
+const onExpire = () => {
+  isVerified.value = false
+  token.value = null
+  eKey.value = null
+  hasExpired.value = true
+}
+
+const onError = ( err ) => {
+  token.value = null
+  eKey.value = null
+  error.value = err
+}
+
 const requestScreenshot = async () => {
+  if ( !isVerified.value ) return
+
   mainState.value = 'generating'
 
   const settings = JSON.stringify({
@@ -44,11 +74,11 @@ const requestScreenshot = async () => {
     },
     body: settings,
   })
-    .then( data => {
+    .then( ( data ) => {
       mainState.value = 'success'
       return data.json()
     })
-    .catch( error => {
+    .catch( ( error ) => {
       mainState.value = 'error'
       console.error( 'Error:', error )
     })
@@ -81,7 +111,7 @@ onMounted( () => {
     </header>
     <main class="site-main">
       <form @submit.prevent="requestScreenshot" class="form card">
-        <div class="form-control">
+        <div class="form-control full-width">
           <label for="target-url" class="form-label">
             {{ t('label.siteUrl') }}
           </label>
@@ -131,7 +161,7 @@ onMounted( () => {
             v-model="fileHeight"
           />
         </div>
-        <div class="form-control">
+        <div class="form-control full-width">
           <label for="full-page" class="form-label">
             <input
               type="checkbox"
@@ -171,7 +201,7 @@ onMounted( () => {
             :disabled="fileType === 'png'"
           />
         </div>
-        <div class="form-control">
+        <div class="form-control full-width">
           <label for="capture-delay" class="form-label">
             {{ t('label.captureDelay') }}
           </label>
@@ -183,8 +213,18 @@ onMounted( () => {
             v-model="captureDelay"
           />
         </div>
-        <div class="form-control">
-          <button type="submit" class="form-button">
+        <div class="form-control full-width align-center">
+          <VueHcaptcha
+            :sitekey="hcaptchaSiteKey"
+            size="normal"
+            @verify="onVerify"
+            @expired="onExpire"
+            @challenge-expired="onExpire"
+            @error="onError"
+          ></VueHcaptcha>
+        </div>
+        <div class="form-control full-width">
+          <button type="submit" class="form-button" :disabled="!isVerified">
             {{ t('label.submit') }}
           </button>
         </div>
@@ -424,18 +464,16 @@ h6 {
 }
 
 .form-control {
-  &:first-child,
-  &:nth-child(4) {
+  &.full-width {
     grid-column: 1/-1;
   }
 
-  &:nth-child(7),
-  &:nth-child(8) {
-    grid-column: 1/-1;
+  &.align-center {
+    justify-self: center;
   }
 
   .form-label {
-    display: block;
+    display: inline-block;
     font-size: 0.875rem;
 
     & + .form-field,
@@ -451,7 +489,9 @@ h6 {
     height: 2.25rem;
     padding: 0.25rem 0.5rem;
     outline: none;
-    transition: color 0.24s ease, background-color 0.24s ease, border 0.24s ease;
+    transition: color 0.24s ease,
+      background-color 0.24s ease,
+      border 0.24s ease;
 
     &::placeholder {
       color: var(--grey-400);
@@ -487,7 +527,6 @@ h6 {
   }
 
   .form-button {
-    grid-column: 1/-1;
     width: 100%;
     font-family: var(--font-primary);
     font-size: 1.125rem;
@@ -498,21 +537,28 @@ h6 {
     border-color: var(--grey-800);
     border-radius: 0.25rem;
     outline: none;
-    transition: background-color 0.24s ease, border 0.24s ease;
+    transition: background-color 0.24s ease,
+      border 0.24s ease,
+      opacity 0.24s ease;
 
     &:focus {
       box-shadow: 0 0 0 0.25rem var(--color-main--lightest);
     }
 
-    &:focus,
-    &:hover {
+    &:focus:not(:disabled),
+    &:hover:not(:disabled) {
       background-color: var(--color-main);
       border-color: var(--color-main);
     }
 
-    &:active {
+    &:active:not(:disabled) {
       background-color: var(--color-main--dark);
       border-color: var(--color-main--dark);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.4;
     }
   }
 }
