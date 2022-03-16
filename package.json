@@ -1,6 +1,6 @@
 {
   "name": "fleximple-webshot-client",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Allows the user to generate a screen capture of a specified website (this is the client side of this project).",
   "main": "src/main.js",
   "scripts": {
