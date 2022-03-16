@@ -1,107 +1,17 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { computed } from 'vue'
+import store from '@/store'
 import { useI18n } from 'vue-i18n'
-import VueHcaptcha from '@hcaptcha/vue3-hcaptcha'
+import BaseForm from './components/BaseForm.vue'
 import BaseNotification from './components/BaseNotification.vue'
 
 const { locale, t } = useI18n({ useScope: 'global' })
-
 locale.value = navigator.language
 
-const hcaptchaSiteKey = import.meta.env.VITE_HCAPTCHA_SITE_KEY
-
-const targetProtocol = ref( 'http' )
-const targetUrl = ref( '' )
-const fileWidth = ref( 1200 )
-const fileHeight = ref( 1600 )
-const fullPage = ref( false )
-const fileType = ref( 'jpeg' )
-const fileQuality = ref( 80 )
-const captureDelay = ref( 0 )
-
-const fileName = ref( null )
+const mainState = computed( () => store.getters.mainState() )
+const webshotSettings = computed( () => store.getters.webshotSettings() )
+const fileName = computed( () => store.getters.fileName() )
 const fileUrl = computed( () => `/screenshots/${ fileName.value }` )
-
-const mainState = ref( 'idle' )
-
-const isVerified = ref( false )
-const hasExpired = ref( false )
-const token = ref( '' )
-const eKey = ref( '' )
-const error = ref( '' )
-
-const onVerify = ( tokenStr, ekey ) => {
-  isVerified.value = true
-  token.value = tokenStr
-  eKey.value = ekey
-}
-
-const onExpire = () => {
-  isVerified.value = false
-  token.value = null
-  eKey.value = null
-  hasExpired.value = true
-}
-
-const onError = ( err ) => {
-  token.value = null
-  eKey.value = null
-  error.value = err
-}
-
-const requestScreenshot = async () => {
-  if ( !isVerified.value ) return
-
-  mainState.value = 'generating'
-
-  const settings = JSON.stringify({
-    targetProtocol: targetProtocol.value,
-    targetUrl: targetUrl.value,
-    fileWidth: fileWidth.value,
-    fileHeight: fileHeight.value,
-    fullPage: fullPage.value,
-    fileType: fileType.value,
-    fileQuality: fileQuality.value,
-    captureDelay: captureDelay.value,
-  })
-
-  localStorage.setItem( 'webshotSettings', settings )
-
-  const response = await fetch( '/screenshot', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: settings,
-  })
-    .then( ( data ) => {
-      mainState.value = 'success'
-      return data.json()
-    })
-    .catch( ( error ) => {
-      mainState.value = 'error'
-      console.error( 'Error:', error )
-    })
-
-  if ( response ) {
-    fileName.value = response.fileName
-  }
-}
-
-onMounted( () => {
-  const settings = JSON.parse( localStorage.getItem( 'webshotSettings' ) )
-
-  if ( settings ) {
-    targetProtocol.value = settings.targetProtocol
-    targetUrl.value = settings.targetUrl
-    fileWidth.value = settings.fileWidth
-    fileHeight.value = settings.fileHeight
-    fullPage.value = settings.fullPage
-    fileType.value = settings.fileType
-    fileQuality.value = settings.fileQuality
-    captureDelay.value = settings.captureDelay
-  }
-})
 </script>
 
 <template>
@@ -110,125 +20,7 @@ onMounted( () => {
       <h1 class="site-title">Fleximple Webshot</h1>
     </header>
     <main class="site-main">
-      <form @submit.prevent="requestScreenshot" class="form card">
-        <div class="form-control full-width">
-          <label for="target-url" class="form-label">
-            {{ t('label.siteUrl') }}
-          </label>
-          <div class="form-field-group">
-            <select
-              name="target-protocol"
-              id="target-protocol"
-              class="form-field"
-              v-model="targetProtocol"
-            >
-              <option value="http">http://</option>
-              <option value="https">https://</option>
-            </select>
-            <input
-              type="text"
-              name="target-url"
-              id="target-url"
-              class="form-field"
-              placeholder="example.com"
-              v-model="targetUrl"
-              required
-            />
-          </div>
-        </div>
-        <div class="form-control">
-          <label for="file-width" class="form-label">
-            {{ t('label.fileWidth') }}
-          </label>
-          <input
-            type="number"
-            name="file-width"
-            id="file-width"
-            class="form-field"
-            v-model="fileWidth"
-          />
-        </div>
-        <div class="form-control">
-          <label for="file-height" class="form-label">
-            {{ t('label.fileHeight') }}
-          </label>
-          <input
-            type="number"
-            name="file-height"
-            id="file-height"
-            class="form-field"
-            :disabled="fullPage"
-            v-model="fileHeight"
-          />
-        </div>
-        <div class="form-control full-width">
-          <label for="full-page" class="form-label">
-            <input
-              type="checkbox"
-              name="full-page"
-              id="full-page"
-              class="form-field"
-              v-model="fullPage"
-            />
-            {{ t('label.fullPage') }}
-          </label>
-        </div>
-        <div class="form-control">
-          <label for="file-type" class="form-label">
-            {{ t('label.fileFormat') }}
-          </label>
-          <select
-            name="file-type"
-            id="file-type"
-            class="form-field"
-            v-model="fileType"
-          >
-            <option value="jpeg">JPG</option>
-            <option value="png">PNG</option>
-            <option value="webp">WEBP</option>
-          </select>
-        </div>
-        <div class="form-control">
-          <label for="file-quality" class="form-label">
-            {{ t('label.fileQuality') }}
-          </label>
-          <input
-            type="number"
-            name="file-quality"
-            id="file-quality"
-            class="form-field"
-            v-model="fileQuality"
-            :disabled="fileType === 'png'"
-          />
-        </div>
-        <div class="form-control full-width">
-          <label for="capture-delay" class="form-label">
-            {{ t('label.captureDelay') }}
-          </label>
-          <input
-            type="number"
-            name="capture-delay"
-            id="capture-delay"
-            class="form-field"
-            v-model="captureDelay"
-          />
-        </div>
-        <div class="form-control full-width align-center">
-          <VueHcaptcha
-            :sitekey="hcaptchaSiteKey"
-            size="normal"
-            @verify="onVerify"
-            @expired="onExpire"
-            @challenge-expired="onExpire"
-            @error="onError"
-          ></VueHcaptcha>
-        </div>
-        <div class="form-control full-width">
-          <button type="submit" class="form-button" :disabled="!isVerified">
-            {{ t('label.submit') }}
-          </button>
-        </div>
-      </form>
+      <BaseForm />
 
       <transition
         name="fade-slide-right"
@@ -243,9 +35,9 @@ onMounted( () => {
           <a :href="fileUrl" target="_blank" :download="fileName">
             <img
               :src="fileUrl"
-              :width="fileWidth"
-              :height="fileHeight"
-              :alt="`${t('screenshot.alt')} ${targetUrl}`"
+              :width="webshotSettings.fileWidth"
+              :height="webshotSettings.fileHeight"
+              :alt="`${t('screenshot.alt')} ${webshotSettings.targetUrl}`"
             />
           </a>
         </div>
@@ -455,112 +247,6 @@ h6 {
   border-radius: 0.25rem;
   box-shadow: var(--box-shadow-1);
   padding: 1.25rem;
-}
-
-.form {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-}
-
-.form-control {
-  &.full-width {
-    grid-column: 1/-1;
-  }
-
-  &.align-center {
-    justify-self: center;
-  }
-
-  .form-label {
-    display: inline-block;
-    font-size: 0.875rem;
-
-    & + .form-field,
-    & + .form-field-group {
-      margin-top: 0.25rem;
-    }
-  }
-
-  .form-field:not([type='checkbox']) {
-    border: 1px solid var(--grey-200);
-    border-radius: 0.25rem;
-    width: 100%;
-    height: 2.25rem;
-    padding: 0.25rem 0.5rem;
-    outline: none;
-    transition: color 0.24s ease,
-      background-color 0.24s ease,
-      border 0.24s ease;
-
-    &::placeholder {
-      color: var(--grey-400);
-    }
-
-    &:focus {
-      border-color: var(--color-main);
-      box-shadow: 0 0 0 0.25rem var(--color-main--lightest);
-      z-index: 1;
-    }
-
-    &:disabled {
-      color: var(--grey-400);
-      background-color: var(--grey-100);
-    }
-  }
-
-  .form-field-group {
-    display: flex;
-
-    .form-field {
-      &:first-child {
-        width: auto;
-        margin-right: -1px;
-        border-radius: 0.25rem 0 0 0.25rem;
-      }
-
-      &:last-child {
-        flex: 1;
-        border-radius: 0 0.25rem 0.25rem 0;
-      }
-    }
-  }
-
-  .form-button {
-    width: 100%;
-    font-family: var(--font-primary);
-    font-size: 1.125rem;
-    font-weight: 500;
-    color: var(--white);
-    text-transform: uppercase;
-    background-color: var(--grey-800);
-    border-color: var(--grey-800);
-    border-radius: 0.25rem;
-    outline: none;
-    transition: background-color 0.24s ease,
-      border 0.24s ease,
-      opacity 0.24s ease;
-
-    &:focus {
-      box-shadow: 0 0 0 0.25rem var(--color-main--lightest);
-    }
-
-    &:focus:not(:disabled),
-    &:hover:not(:disabled) {
-      background-color: var(--color-main);
-      border-color: var(--color-main);
-    }
-
-    &:active:not(:disabled) {
-      background-color: var(--color-main--dark);
-      border-color: var(--color-main--dark);
-    }
-
-    &:disabled {
-      cursor: not-allowed;
-      opacity: 0.4;
-    }
-  }
 }
 
 .fade-slide-up-enter-active {
