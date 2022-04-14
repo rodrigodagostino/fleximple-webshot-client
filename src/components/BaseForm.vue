@@ -12,9 +12,9 @@ const hcaptchaSiteKey = import.meta.env.VITE_HCAPTCHA_SITE_KEY
 
 const webshotSettings = computed( () => store.getters.webshotSettings() )
 
-const setWebshotSetting = ( event ) => {
-  const propName = _.camelCase( event.target.name )
-  const propValue = event.target.value
+const setWebshotSetting = ({ target }) => {
+  const propName = _.camelCase( target.name )
+  const propValue = target.type === 'checkbox' ? target.checked : target.value
 
   store.mutations.setWebshotSettings({
     ...webshotSettings.value,
