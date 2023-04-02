@@ -45,6 +45,33 @@ const fileUrl = computed(() => `/screenshots/${fileName.value}`)
 </template>
 
 <style lang="scss">
+@font-face {
+  font-display: swap;
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 500;
+  src: url('./assets/fonts/poppins-v20-latin-500.woff2') format('woff2'),
+    url('./assets/fonts/poppins-v20-latin-500.woff') format('woff');
+}
+
+@font-face {
+  font-display: swap;
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 600;
+  src: url('./assets/fonts/poppins-v20-latin-600.woff2') format('woff2'),
+    url('./assets/fonts/poppins-v20-latin-600.woff') format('woff');
+}
+
+@font-face {
+  font-display: swap;
+  font-family: 'Rubik';
+  font-style: normal;
+  font-weight: 400;
+  src: url('./assets/fonts/rubik-v26-latin-400.woff2') format('woff2'),
+    url('./assets/fonts/rubik-v26-latin-400.woff') format('woff');
+}
+
 /**
  * Variables
  */
