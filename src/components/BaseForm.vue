@@ -9,7 +9,7 @@ import { useI18n } from 'vue-i18n'
 const { locale, t } = useI18n({ useScope: 'global' })
 locale.value = navigator.language
 
-const mode = import.meta.env.VITE_MODE
+const mode = import.meta.env.VITE_MODE || 'production'
 const hcaptchaSiteKey = import.meta.env.VITE_HCAPTCHA_SITE_KEY
 
 const webshotSettings = computed(() => store.getters.webshotSettings())
