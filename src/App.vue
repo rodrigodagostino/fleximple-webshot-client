@@ -17,7 +17,8 @@ const fileUrl = computed(() => `/screenshots/${fileName.value}`)
 <template>
   <div class="container">
     <header class="site-header">
-      <h1 class="site-title">Fleximple Webshot</h1>
+      <p class="site-eyebrow">Fleximple</p>
+      <h1 class="site-title">Webshot</h1>
     </header>
     <main class="site-main">
       <BaseForm />
@@ -58,9 +59,9 @@ const fileUrl = computed(() => `/screenshots/${fileName.value}`)
   font-display: swap;
   font-family: 'Poppins';
   font-style: normal;
-  font-weight: 600;
-  src: url('./assets/fonts/poppins-v20-latin-600.woff2') format('woff2'),
-    url('./assets/fonts/poppins-v20-latin-600.woff') format('woff');
+  font-weight: 700;
+  src: url('./assets/fonts/poppins-v20-latin-700.woff2') format('woff2'),
+    url('./assets/fonts/poppins-v20-latin-700.woff') format('woff');
 }
 
 @font-face {
@@ -70,6 +71,15 @@ const fileUrl = computed(() => `/screenshots/${fileName.value}`)
   font-weight: 400;
   src: url('./assets/fonts/rubik-v26-latin-400.woff2') format('woff2'),
     url('./assets/fonts/rubik-v26-latin-400.woff') format('woff');
+}
+
+@font-face {
+  font-display: swap;
+  font-family: 'Rubik';
+  font-style: normal;
+  font-weight: 600;
+  src: url('./assets/fonts/rubik-v26-latin-600.woff2') format('woff2'),
+    url('./assets/fonts/rubik-v26-latin-600.woff') format('woff');
 }
 
 /**
@@ -249,11 +259,22 @@ h6 {
   }
 }
 
-.site-title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  line-height: 1;
+.site-header {
   text-align: center;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.site-eyebrow {
+  font-family: var(--font-secondary);
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.site-title {
+  font-size: 3rem;
+  font-weight: 700;
 }
 
 .site-main {
