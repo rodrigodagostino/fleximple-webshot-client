@@ -10,25 +10,25 @@ locale.value = navigator.language
 
 const hcaptchaSiteKey = import.meta.env.VITE_HCAPTCHA_SITE_KEY
 
-const webshotSettings = computed( () => store.getters.webshotSettings() )
+const webshotSettings = computed(() => store.getters.webshotSettings())
 
 const setWebshotSetting = ({ target }) => {
-  const propName = _.camelCase( target.name )
+  const propName = _.camelCase(target.name)
   const propValue = target.type === 'checkbox' ? target.checked : target.value
 
   store.mutations.setWebshotSettings({
     ...webshotSettings.value,
-    [ propName ]: propValue,
+    [propName]: propValue,
   })
 }
 
-const isVerified = ref( false )
-const hasExpired = ref( false )
-const token = ref( '' )
-const eKey = ref( '' )
-const error = ref( '' )
+const isVerified = ref(false)
+const hasExpired = ref(false)
+const token = ref('')
+const eKey = ref('')
+const error = ref('')
 
-const onVerify = ( tokenStr, ekey ) => {
+const onVerify = (tokenStr, ekey) => {
   isVerified.value = true
   token.value = tokenStr
   eKey.value = ekey
@@ -41,49 +41,49 @@ const onExpire = () => {
   hasExpired.value = true
 }
 
-const onError = ( err ) => {
+const onError = (err) => {
   token.value = null
   eKey.value = null
   error.value = err
 }
 
 const requestScreenshot = async () => {
-  if ( !isVerified.value ) return
+  if (!isVerified.value) return
 
-  store.mutations.setMainState( 'generating' )
+  store.mutations.setMainState('generating')
 
-  const response = await fetch( '/screenshot', {
+  const response = await fetch('/screenshot', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify( webshotSettings.value ),
+    body: JSON.stringify(webshotSettings.value),
   })
-    .then( ( data ) => {
-      store.mutations.setMainState( 'success' )
+    .then((data) => {
+      store.mutations.setMainState('success')
       return data.json()
     })
-    .catch( ( error ) => {
-      store.mutations.setMainState( 'error' )
-      console.error( 'Error:', error )
+    .catch((error) => {
+      store.mutations.setMainState('error')
+      console.error('Error:', error)
     })
 
-  if ( response ) {
-    store.mutations.setFileName( response.fileName )
+  if (response) {
+    store.mutations.setFileName(response.fileName)
   }
 }
 </script>
 
 <template>
-  <form @submit.prevent="requestScreenshot" class="form card">
+  <form class="form card" @submit.prevent="requestScreenshot">
     <div class="form-control full-width">
       <label for="target-url" class="form-label">
         {{ t('label.siteUrl') }}
       </label>
       <div class="form-field-group">
         <select
-          name="target-protocol"
           id="target-protocol"
+          name="target-protocol"
           class="form-field"
           :value="webshotSettings.targetProtocol"
           @change="setWebshotSetting"
@@ -92,14 +92,14 @@ const requestScreenshot = async () => {
           <option value="https">https://</option>
         </select>
         <input
+          id="target-url"
           type="text"
           name="target-url"
-          id="target-url"
           class="form-field"
           placeholder="example.com"
           :value="webshotSettings.targetUrl"
-          @change="setWebshotSetting"
           required
+          @change="setWebshotSetting"
         />
       </div>
     </div>
@@ -108,9 +108,9 @@ const requestScreenshot = async () => {
         {{ t('label.fileWidth') }}
       </label>
       <input
+        id="file-width"
         type="number"
         name="file-width"
-        id="file-width"
         class="form-field"
         :value="webshotSettings.fileWidth"
         @change="setWebshotSetting"
@@ -121,9 +121,9 @@ const requestScreenshot = async () => {
         {{ t('label.fileHeight') }}
       </label>
       <input
+        id="file-height"
         type="number"
         name="file-height"
-        id="file-height"
         class="form-field"
         :disabled="fullPage"
         :value="webshotSettings.fileHeight"
@@ -133,9 +133,9 @@ const requestScreenshot = async () => {
     <div class="form-control full-width">
       <label for="full-page" class="form-label">
         <input
+          id="full-page"
           type="checkbox"
           name="full-page"
-          id="full-page"
           class="form-field"
           :value="webshotSettings.fullPage"
           @change="setWebshotSetting"
@@ -148,8 +148,8 @@ const requestScreenshot = async () => {
         {{ t('label.fileFormat') }}
       </label>
       <select
-        name="file-type"
         id="file-type"
+        name="file-type"
         class="form-field"
         :value="webshotSettings.fileType"
         @change="setWebshotSetting"
@@ -164,9 +164,9 @@ const requestScreenshot = async () => {
         {{ t('label.fileQuality') }}
       </label>
       <input
+        id="file-quality"
         type="number"
         name="file-quality"
-        id="file-quality"
         class="form-field"
         :disabled="fileType === 'png'"
         :value="webshotSettings.fileQuality"
@@ -178,9 +178,9 @@ const requestScreenshot = async () => {
         {{ t('label.captureDelay') }}
       </label>
       <input
+        id="capture-delay"
         type="number"
         name="capture-delay"
-        id="capture-delay"
         class="form-field"
         :value="webshotSettings.captureDelay"
         @change="setWebshotSetting"
@@ -237,9 +237,7 @@ const requestScreenshot = async () => {
     height: 2.25rem;
     padding: 0.25rem 0.5rem;
     outline: none;
-    transition: color 0.24s ease,
-      background-color 0.24s ease,
-      border 0.24s ease;
+    transition: color 0.24s ease, background-color 0.24s ease, border 0.24s ease;
 
     &::placeholder {
       color: var(--grey-400);
@@ -285,8 +283,7 @@ const requestScreenshot = async () => {
     border-color: var(--grey-800);
     border-radius: 0.25rem;
     outline: none;
-    transition: background-color 0.24s ease,
-      border 0.24s ease,
+    transition: background-color 0.24s ease, border 0.24s ease,
       opacity 0.24s ease;
 
     &:focus {

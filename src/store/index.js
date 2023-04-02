@@ -1,12 +1,12 @@
 import { reactive } from 'vue'
 
 // Clean up the storage if it’s undefined.
-if ( localStorage.getItem( 'webshotSettings' ) === 'undefined' ) {
-  localStorage.removeItem( 'webshotSettings' )
+if (localStorage.getItem('webshotSettings') === 'undefined') {
+  localStorage.removeItem('webshotSettings')
 }
 
 // Set default parameters if storage is empty.
-if ( !localStorage.getItem( 'webshotSettings' ) ) {
+if (!localStorage.getItem('webshotSettings')) {
   localStorage.setItem(
     'webshotSettings',
     JSON.stringify({
@@ -18,13 +18,13 @@ if ( !localStorage.getItem( 'webshotSettings' ) ) {
       fileType: 'jpeg',
       fileQuality: 80,
       captureDelay: 0,
-    }),
+    })
   )
 }
 
 const state = reactive({
   mainState: 'idle',
-  webshotSettings: JSON.parse( localStorage.getItem( 'webshotSettings' ) ),
+  webshotSettings: JSON.parse(localStorage.getItem('webshotSettings')),
   fileName: null,
 })
 
@@ -39,17 +39,14 @@ const getters = {
 }
 
 const mutations = {
-  setMainState: ( newMainState ) => state.mainState = newMainState,
+  setMainState: (newMainState) => (state.mainState = newMainState),
 
-  setWebshotSettings( newWebshotSettings ) {
+  setWebshotSettings(newWebshotSettings) {
     state.webshotSettings = newWebshotSettings
-    localStorage.setItem(
-      'webshotSettings',
-      JSON.stringify( newWebshotSettings ),
-    )
+    localStorage.setItem('webshotSettings', JSON.stringify(newWebshotSettings))
   },
 
-  setFileName: ( newFileName ) => state.fileName = newFileName,
+  setFileName: (newFileName) => (state.fileName = newFileName),
 }
 
 export default {

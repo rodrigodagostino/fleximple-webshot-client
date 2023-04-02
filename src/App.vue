@@ -8,10 +8,10 @@ import BaseNotification from './components/BaseNotification.vue'
 const { locale, t } = useI18n({ useScope: 'global' })
 locale.value = navigator.language
 
-const mainState = computed( () => store.getters.mainState() )
-const webshotSettings = computed( () => store.getters.webshotSettings() )
-const fileName = computed( () => store.getters.fileName() )
-const fileUrl = computed( () => `/screenshots/${ fileName.value }` )
+const mainState = computed(() => store.getters.mainState())
+const webshotSettings = computed(() => store.getters.webshotSettings())
+const fileName = computed(() => store.getters.fileName())
+const fileUrl = computed(() => `/screenshots/${fileName.value}`)
 </script>
 
 <template>
@@ -21,15 +21,13 @@ const fileUrl = computed( () => `/screenshots/${ fileName.value }` )
     </header>
     <main class="site-main">
       <BaseForm />
-
       <transition
         name="fade-slide-right"
         leave-active-class="fade-leave-active"
         mode="out-in"
       >
-        <BaseNotification :mainState="mainState" />
+        <BaseNotification :main-state="mainState" />
       </transition>
-
       <transition name="fade-slide-up">
         <div v-if="mainState !== 'generating' && fileName" class="card">
           <a :href="fileUrl" target="_blank" :download="fileName">
