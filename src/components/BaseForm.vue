@@ -1,13 +1,15 @@
 <script setup>
+import VueHcaptcha from '@hcaptcha/vue3-hcaptcha'
+import _ from 'lodash'
+
 import { computed, ref } from 'vue'
 import store from '@/store'
 import { useI18n } from 'vue-i18n'
-import VueHcaptcha from '@hcaptcha/vue3-hcaptcha'
-import _ from 'lodash'
 
 const { locale, t } = useI18n({ useScope: 'global' })
 locale.value = navigator.language
 
+const mode = import.meta.env.VITE_MODE
 const hcaptchaSiteKey = import.meta.env.VITE_HCAPTCHA_SITE_KEY
 
 const webshotSettings = computed(() => store.getters.webshotSettings())
@@ -48,7 +50,7 @@ const onError = (err) => {
 }
 
 const requestScreenshot = async () => {
-  if (!isVerified.value) return
+  if (mode !== 'development' && !isVerified.value) return
 
   store.mutations.setMainState('generating')
 
@@ -68,9 +70,7 @@ const requestScreenshot = async () => {
       console.error('Error:', error)
     })
 
-  if (response) {
-    store.mutations.setFileName(response.fileName)
-  }
+  if (response) store.mutations.setFileName(response.fileName)
 }
 </script>
 
@@ -186,7 +186,10 @@ const requestScreenshot = async () => {
         @change="setWebshotSetting"
       />
     </div>
-    <div class="form-control full-width align-center">
+    <div
+      v-if="mode !== 'development'"
+      class="form-control full-width align-center"
+    >
       <VueHcaptcha
         :sitekey="hcaptchaSiteKey"
         size="normal"
@@ -197,7 +200,11 @@ const requestScreenshot = async () => {
       ></VueHcaptcha>
     </div>
     <div class="form-control full-width">
-      <button type="submit" class="form-button" :disabled="!isVerified">
+      <button
+        type="submit"
+        class="form-button"
+        :disabled="mode !== 'development' && !isVerified"
+      >
         {{ t('label.submit') }}
       </button>
     </div>
